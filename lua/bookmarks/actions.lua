@@ -190,8 +190,8 @@ M.refresh = function(bufnr)
 end
 
 function M.loadBookmarks()
-   if utils.path_exists(config.save_file) then
-      utils.read_file(config.save_file, function(data)
+   if utils.path_exists(M.getSaveFile()) then
+      utils.read_file(M.getSaveFile(), function(data)
          config.cache = vim.json.decode(data)
          config.marks = data
       end)
@@ -201,8 +201,13 @@ end
 function M.saveBookmarks()
    local data = vim.json.encode(config.cache)
    if config.marks ~= data then
-      utils.write_file(config.save_file, data)
+      utils.write_file(M.getSaveFile(), data)
    end
+end
+
+function M.getSaveFile()
+   local workspace = vim.fn.getcwd()
+   return config.save_file .. "." .. workspace:gsub("/", "#")
 end
 
 return M
